@@ -2,9 +2,9 @@
 
 **Full-Stack Project (Go + React)**
 
-Este proyecto es un mapeo interactivo del ecosistema Agrotech, permitiendo filtrar startups por país, sector, etapa y más. Incluye autenticación (login/registro) y panel de administración para usuarios con rol admin.
+Este proyecto es un mapeo interactivo del ecosistema Agrotech, permitiendo filtrar startups por paï¿½s, sector, etapa y mï¿½s. Incluye autenticaciï¿½n (login/registro) y panel de administraciï¿½n para usuarios con rol admin.
 
-## Tecnologías
+## Tecnologï¿½as
 
 - **Backend**: Go (API REST) + MariaDB
 - **Frontend**: React + Vite + TailwindCSS + Shadcn/UI
@@ -18,10 +18,10 @@ Este proyecto es un mapeo interactivo del ecosistema Agrotech, permitiendo filtr
 - Node.js 18+
 - MySQL / MariaDB
 
-### Configuración
+### Configuraciï¿½n
 
 1. Clona el repositorio.
-2. Configura el archivo `.env` en el backend basándote en `.env.example`.
+2. Configura el archivo `.env` en el backend basï¿½ndote en `.env.example`.
 3. Crea la base de datos y corre las migraciones SQL (ver abajo).
 
 ### Base de datos
@@ -41,14 +41,14 @@ USE lodo_db;
 - `004_taxonomies.sql` ? tabla taxonomies y datos iniciales
 - **`005_users.sql`** ? tabla de usuarios y login
 
-3. **Usuarios (autenticación)**  
-   La migración `005_users.sql` crea la tabla `users` y un usuario administrador por defecto:
+3. **Usuarios (autenticaciï¿½n)**  
+   La migraciï¿½n `005_users.sql` crea la tabla `users` y un usuario administrador por defecto:
 
    - **Email:** `admin@lodo.com`
    - **Password:** `admin123`  
-   Solo los usuarios con rol `admin` pueden acceder al panel de administración y agregar/editar organizaciones.
+   Solo los usuarios con rol `admin` pueden acceder al panel de administraciï¿½n y agregar/editar organizaciones.
 
-### Ejecución
+### Ejecuciï¿½n
 
 - **Backend**: `cd backend && go run cmd/api/main.go`
 - **Frontend**: `cd frontend && npm install && npm run dev`

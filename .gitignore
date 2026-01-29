@@ -17,6 +17,8 @@ backend/*.exe
 # IDE / OS
 .idea/
 .vscode/
+.cursor/
+.cursorignore
 *.swp
 .DS_Store
 Thumbs.db
