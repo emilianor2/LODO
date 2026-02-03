@@ -8,7 +8,7 @@ import { Input } from '../ui/input';
 export default function AppShell({ children, onSearchChange, searchValue, resultsCount }) {
     const location = useLocation();
     const isAdminRoute = location.pathname.startsWith('/admin');
-    const { isAdmin } = useAuth();
+    const { isAdmin, isAuthenticated } = useAuth();
 
     const navigate = useNavigate();
 
@@ -16,11 +16,29 @@ export default function AppShell({ children, onSearchChange, searchValue, result
         <div className="flex flex-col h-screen bg-background overflow-hidden">
             {/* Header */}
             <header className="sticky top-0 z-[2200] w-full border-b bg-background/100 backdrop-blur-sm shadow-sm">
-                <div className={`flex ${location.pathname.startsWith('/map') ? 'h-[52px]' : 'h-10'} items-center justify-between px-3`}>
+                <div
+                    className={`flex ${
+                        location.pathname.startsWith('/map')
+                            ? 'h-[52px]'
+                            : location.pathname.startsWith('/contacto') || location.pathname.startsWith('/admin')
+                                ? 'h-16'
+                                : 'h-10'
+                    } items-center justify-between px-3`}
+                >
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-3 group transition-all duration-300 active:scale-95">
-                        {location.pathname.startsWith('/map') ? (
-                            <img src="/lodo1.png" alt="LODO" className="h-20 w-20 object-contain" />
+                        {location.pathname.startsWith('/map') ||
+                        location.pathname.startsWith('/contacto') ||
+                        location.pathname.startsWith('/admin') ? (
+                            <img
+                                src="/lodo1.png"
+                                alt="LODO"
+                                className={`object-contain ${
+                                    location.pathname.startsWith('/contacto') || location.pathname.startsWith('/admin')
+                                        ? 'h-[96px] w-[96px]'
+                                        : 'h-20 w-20'
+                                }`}
+                            />
                         ) : (
                             <div className="p-0.5 rounded-lg shadow-primary/20 shadow-lg group-hover:rotate-6 transition-transform bg-transparent">
                                 <img src="/lodo.png" alt="LODO" className="h-10 w-10 object-contain" />
@@ -62,7 +80,7 @@ export default function AppShell({ children, onSearchChange, searchValue, result
                             </Link>
                         )}
                         {/* Add Company button for non-admin users on map page */}
-                        {!isAdmin && location.pathname.startsWith('/map') && (
+                        {!isAdmin && isAuthenticated && location.pathname.startsWith('/map') && (
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -90,7 +108,11 @@ export default function AppShell({ children, onSearchChange, searchValue, result
             </header>
 
             {/* Main Content */}
-            <main className="flex-1 relative overflow-hidden">
+            <main
+                className={`flex-1 relative ${
+                    location.pathname.startsWith('/map') ? 'overflow-hidden' : 'overflow-y-auto'
+                }`}
+            >
                 {children}
             </main>
         </div>

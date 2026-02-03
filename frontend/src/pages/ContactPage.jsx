@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppShell from '../components/layout/AppShell';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -6,6 +6,7 @@ import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import emailjs from '@emailjs/browser';
 
 export default function ContactPage() {
     const navigate = useNavigate();
@@ -22,6 +23,10 @@ export default function ContactPage() {
         email: '',
         phone: ''
     });
+
+    useEffect(() => {
+        emailjs.init('qzBGuQNfWhDVeksDc');
+    }, []);
 
     const companyOptions = [
         { value: 'AGTECH', label: 'AGTECH' },
@@ -43,28 +48,41 @@ export default function ContactPage() {
         setLoading(true);
 
         const type = form.companyType === 'OTHER' ? form.otherType : form.companyType;
-        const body = `Nombre: ${form.firstName} ${form.lastName}\nEmpresa: ${form.companyName}\nTipo: ${type}\nUbicación: ${form.location}\nDirección: ${form.address}\nWebsite: ${form.website}\nEmail: ${form.email}\nTeléfono: ${form.phone}`;
-        const mailto = `mailto:emilianor92@gmail.com?subject=${encodeURIComponent('Nuevo envío - Agregar Empresa LODO')}&body=${encodeURIComponent(body)}`;
+        const templateParams = {
+            firstName: form.firstName,
+            lastName: form.lastName,
+            companyName: form.companyName,
+            companyType: type,
+            location: form.location,
+            address: form.address,
+            website: form.website,
+            email: form.email,
+            phone: form.phone,
+            name: `${form.firstName} ${form.lastName}`.trim(),
+            title: form.companyName
+        };
 
-        try {
-            window.location.href = mailto;
-            toast.success('Se abrió el cliente de correo para enviar la solicitud');
-            navigate('/');
-        } catch (err) {
-            console.error(err);
-            toast.error('No se pudo abrir el cliente de correo. Copiando contenido al portapapeles.');
-            navigator.clipboard?.writeText(body);
-        } finally {
-            setLoading(false);
-        }
+        emailjs
+            .send('service_qvp845m', 'template_fgq7vlh', templateParams)
+            .then(() => {
+                toast.success('Solicitud enviada correctamente');
+                navigate('/');
+            })
+            .catch((err) => {
+                console.error(err);
+                toast.error('No se pudo enviar el formulario. Intentá nuevamente.');
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     return (
         <AppShell>
-            <div className="min-h-[60vh] flex items-center justify-center p-6">
+            <div className="min-h-screen flex items-start justify-center p-6 py-10 overflow-y-auto">
                 <div className="w-full max-w-3xl bg-background/80 p-8 rounded-2xl shadow-lg">
                     <h1 className="text-2xl font-bold mb-4">Agregar Empresa / Contacto</h1>
-                    <p className="text-sm text-muted-foreground mb-6">Completa el formulario y se abrirá tu cliente de correo para enviar la solicitud.</p>
+                    <p className="text-sm text-muted-foreground mb-6">Completa el formulario y se enviará directamente a LODO.</p>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -131,7 +149,7 @@ export default function ContactPage() {
                             </div>
                         </div>
 
-                        <div className="text-sm text-muted-foreground">Al enviar se abrirá tu cliente de correo para enviar la información a LODO.</div>
+                        <div className="text-sm text-muted-foreground">Al enviar se enviará directamente la información a LODO.</div>
 
                         <div className="flex items-center gap-3 pt-2">
                             <Button variant="ghost" onClick={() => navigate(-1)} disabled={loading}>Cancelar</Button>
@@ -143,3 +161,4 @@ export default function ContactPage() {
         </AppShell>
     );
 }
+

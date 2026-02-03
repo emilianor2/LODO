@@ -3,6 +3,49 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 're
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 
+const getClusterSizeClass = (count) => {
+    if (count < 10) return 'small';
+    if (count < 100) return 'medium';
+    return 'large';
+};
+
+const hexToRgba = (hex, alpha) => {
+    const value = hex.replace('#', '');
+    const r = parseInt(value.substring(0, 2), 16);
+    const g = parseInt(value.substring(2, 4), 16);
+    const b = parseInt(value.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+const getClusterColors = (count) => {
+    const palette = ['#cfffca', '#a5eea0', '#77dd77', '#5dc460', '#42ab49'];
+    let index = 0;
+
+    if (count >= 6 && count <= 10) index = 1;
+    if (count >= 11 && count <= 15) index = 2;
+    if (count >= 16 && count <= 20) index = 3;
+    if (count >= 21) index = 4;
+
+    const fill = palette[index];
+
+    return {
+        fill,
+        halo: hexToRgba(fill, 0.35)
+    };
+};
+
+const createClusterIcon = (cluster) => {
+    const count = cluster.getChildCount();
+    const { fill, halo } = getClusterColors(count);
+    const sizeClass = getClusterSizeClass(count);
+
+    return L.divIcon({
+        html: `<div style="--cluster-fill:${fill}; --cluster-halo:${halo};"><span>${count}</span></div>`,
+        className: `marker-cluster marker-cluster-${sizeClass}`,
+        iconSize: L.point(40, 40)
+    });
+};
+
 // Fix for default marker icon missing in React Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -61,7 +104,11 @@ export default function MapView({ organizations, onBboxChange, onMarkerClick, ce
 
             {centeredLocation && <FlyToLocation lat={centeredLocation.lat} lng={centeredLocation.lng} />}
 
-            <MarkerClusterGroup chunkedLoading>
+            <MarkerClusterGroup
+                chunkedLoading
+                singleMarkerMode={true}
+                iconCreateFunction={createClusterIcon}
+            >
                 {organizations.map(org => {
                     if (!org.lat || !org.lng) return null;
                     return (
