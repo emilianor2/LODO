@@ -11,6 +11,9 @@ import emailjs from '@emailjs/browser';
 export default function ContactPage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const emailPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+    const emailServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const emailTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
     const [form, setForm] = useState({
         firstName: '',
         lastName: '',
@@ -25,8 +28,12 @@ export default function ContactPage() {
     });
 
     useEffect(() => {
-        emailjs.init('qzBGuQNfWhDVeksDc');
-    }, []);
+        if (emailPublicKey) {
+            emailjs.init(emailPublicKey);
+        } else {
+            console.warn('Missing VITE_EMAILJS_PUBLIC_KEY - email sending disabled.');
+        }
+    }, [emailPublicKey]);
 
     const companyOptions = [
         { value: 'AGTECH', label: 'AGTECH' },
@@ -45,6 +52,10 @@ export default function ContactPage() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!emailServiceId || !emailTemplateId || !emailPublicKey) {
+            toast.error('Email no configurado. RevisÃ¡ las variables de entorno.');
+            return;
+        }
         setLoading(true);
 
         const type = form.companyType === 'OTHER' ? form.otherType : form.companyType;
@@ -63,7 +74,7 @@ export default function ContactPage() {
         };
 
         emailjs
-            .send('service_qvp845m', 'template_fgq7vlh', templateParams)
+            .send(emailServiceId, emailTemplateId, templateParams)
             .then(() => {
                 toast.success('Solicitud enviada correctamente');
                 navigate('/');

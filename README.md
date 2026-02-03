@@ -22,7 +22,8 @@ Este proyecto es un mapeo interactivo del ecosistema Agrotech, permitiendo filtr
 
 1. Clona el repositorio.
 2. Configura el archivo `.env` en el backend bas�ndote en `.env.example`.
-3. Crea la base de datos y corre las migraciones SQL (ver abajo).
+3. Configura el archivo `.env` en el frontend (`frontend/.env`) con los IDs de EmailJS.
+4. Crea la base de datos y corre las migraciones SQL (ver abajo).
 
 ### Base de datos
 
@@ -52,6 +53,14 @@ USE lodo_db;
 
 - **Backend**: `cd backend && go run cmd/api/main.go`
 - **Frontend**: `cd frontend && npm install && npm run dev`
+
+### Email (EmailJS)
+
+En `frontend/.env`:
+
+- `VITE_EMAILJS_PUBLIC_KEY`
+- `VITE_EMAILJS_SERVICE_ID`
+- `VITE_EMAILJS_TEMPLATE_ID`
 
 ---
 
