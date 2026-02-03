@@ -26,6 +26,7 @@ const FinalCTA = () => {
                         Unite a la red más grande de AgriFoodTech y empezá a descubrir las oportunidades que impulsarán tu crecimiento.
                     </p>
 
+                    <div className="flex flex-col items-center gap-4">
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -36,6 +37,14 @@ const FinalCTA = () => {
                         ENTRAR AL MAPA
                         <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
                     </motion.button>
+
+                    <button
+                        onClick={() => navigate('/contacto')}
+                        className="text-sm text-white/90 underline underline-offset-4"
+                    >
+                        ¿Querés agregar tu empresa? Contáctanos
+                    </button>
+                    </div>
                 </div>
             </motion.div>
         </section>

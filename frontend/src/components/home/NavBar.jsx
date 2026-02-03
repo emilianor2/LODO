@@ -27,14 +27,13 @@ const NavBar = () => {
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'py-4' : 'py-8'
-                }`}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-[92px] ${isScrolled ? 'py-2' : 'py-4'}`}
         >
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-3 h-full">
                 <div
-                    className={`flex items-center justify-between px-6 py-3 rounded-2xl border transition-all duration-300 ${isScrolled
-                            ? 'bg-black/60 backdrop-blur-xl border-white/10 shadow-2xl'
-                            : 'bg-transparent border-transparent'
+                    className={`flex items-center justify-between h-full px-3 py-0 rounded-2xl border transition-all duration-300 ${isScrolled
+                            ? 'bg-black/80 backdrop-blur-xl border-white/10 shadow-2xl'
+                            : 'bg-black/10 border-transparent'
                         }`}
                 >
                     {/* Logo */}
@@ -42,8 +41,7 @@ const NavBar = () => {
                         className="flex items-center gap-2 cursor-pointer"
                         onClick={() => navigate('/')}
                     >
-                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-black text-white text-xl">L</div>
-                        <span className="text-xl font-bold text-white tracking-tight">LODO</span>
+                        <img src="/lodo.png" alt="LODO" className="h-12 w-auto object-contain -mt-1" />
                     </div>
 
                     {/* Desktop Nav */}
@@ -70,6 +68,8 @@ const NavBar = () => {
                             <Map className="w-4 h-4 mr-2" />
                             VER MAPA
                         </motion.button>
+
+                        {/* "Ver Mapa" moved to admin header; removed here to avoid duplicate buttons */}
 
                         {/* Auth Button */}
                         {isAuthenticated ? (

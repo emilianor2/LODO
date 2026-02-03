@@ -4,6 +4,7 @@ import { Toaster } from 'sonner';
 import MapPage from './pages/MapPage';
 import AdminPage from './pages/AdminPage';
 import HomePage from './pages/HomePage';
+import ContactPage from './pages/ContactPage';
 
 function App() {
     return (
@@ -12,8 +13,9 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/map" element={<MapPage />} />
                 <Route path="/admin" element={<AdminPage />} />
+                <Route path="/contacto" element={<ContactPage />} />
             </Routes>
-            <Toaster position="top-right" richColors />
+            <Toaster position="top-center" richColors />
         </>
     );
 }

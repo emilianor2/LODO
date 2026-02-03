@@ -84,7 +84,7 @@ export default function PublicMap() {
         <div className="app-container">
             <div className="sidebar">
                 <div className="sidebar-header">
-                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>LODO Map</h1>
+                    <img src="/lodo.png" alt="LODO" style={{ height: 36 }} />
                     <a href="/admin" style={{ fontSize: '0.8rem', color: '#666' }}>Admin Panel</a>
                 </div>
                 <div className="sidebar-content">

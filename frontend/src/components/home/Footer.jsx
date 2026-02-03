@@ -19,7 +19,6 @@ const Footer = () => {
                     <div className="flex flex-col gap-4">
                         <h4 className="text-white font-bold text-xs uppercase tracking-widest">Plataforma</h4>
                         <a href="/map" className="text-zinc-500 hover:text-white transition-colors text-sm">Mapa Interactivos</a>
-                        <a href="/admin" className="text-zinc-500 hover:text-white transition-colors text-sm">Dashboard Admin</a>
                     </div>
                     <div className="flex flex-col gap-4">
                         <h4 className="text-white font-bold text-xs uppercase tracking-widest">Compañía</h4>

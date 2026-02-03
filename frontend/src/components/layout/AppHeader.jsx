@@ -16,12 +16,11 @@ export default function AppHeader({ onSearchChange, searchValue, resultsCount })
 
     return (
         <>
-            <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="container flex h-16 items-center justify-between px-4">
+            <header className="sticky top-0 z-50 w-full border-b bg-background/100 backdrop-blur-sm">
+                <div className="container flex h-10 items-center justify-between px-3">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-                        <Map className="h-6 w-6 text-primary" />
-                        <span>LODO Map</span>
+                    <Link to="/" className="flex items-center gap-2">
+                        <img src="/lodo.png" alt="LODO" className="h-10 w-10 object-contain" />
                     </Link>
 
                     {/* Search (solo en mapa) */}

@@ -4,6 +4,7 @@ import AppShell from '../components/layout/AppShell';
 import MapView from '../components/Map/MapView';
 import OrgDetailDrawer from '../components/Detail/OrgDetailDrawer';
 import MapShellLayout from '../components/Map/MapShellLayout';
+import { useAuth } from '../context/AuthContext';
 import { fetchOrganizations } from '../services/api';
 import { useFacets } from '../hooks/useFacets';
 import { useSearchParams } from 'react-router-dom';
@@ -44,6 +45,9 @@ export default function MapPage() {
     const [loadingResults, setLoadingResults] = useState(false);
     const [selectedOrgId, setSelectedOrgId] = useState(null);
     const [centeredLocation, setCenteredLocation] = useState(null);
+    const { isAdmin } = useAuth();
+    const [refreshKey, setRefreshKey] = useState(0);
+
 
     const abortControllerRef = useRef(null);
 
@@ -80,7 +84,7 @@ export default function MapPage() {
         return () => {
             if (abortControllerRef.current) abortControllerRef.current.abort();
         };
-    }, [debouncedFilters]); // Removed debouncedBbox from dependencies
+    }, [debouncedFilters, refreshKey]); // Removed debouncedBbox from dependencies
 
     const handleMarkerClick = useCallback((id) => {
         setSelectedOrgId(id);
@@ -145,6 +149,8 @@ export default function MapPage() {
                     onClose={() => setSelectedOrgId(null)}
                 />
             )}
+
+            {/* Public org creation moved to dedicated /contacto page */}
         </AppShell>
     );
 }

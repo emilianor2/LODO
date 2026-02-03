@@ -8,7 +8,8 @@ import { useAuth } from '../context/AuthContext';
 import {
     LayoutDashboard, Plus, Search,
     Filter, Database, RefreshCcw,
-    AlertCircle, ShieldX, LogIn
+    AlertCircle, ShieldX, LogIn,
+    Map as MapIcon, Home as HomeIcon
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -90,35 +91,6 @@ export default function AdminPage() {
         );
     }
 
-    // Not authenticated - show login prompt
-    if (!isAuthenticated) {
-        return (
-            <AppShell>
-                <div className="flex items-center justify-center h-full bg-slate-50">
-                    <div className="text-center max-w-md p-8">
-                        <div className="bg-amber-100 p-4 rounded-full w-fit mx-auto mb-6">
-                            <LogIn className="h-12 w-12 text-amber-600" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-2">Inicia Sesión</h2>
-                        <p className="text-slate-500 mb-6">
-                            Necesitas iniciar sesión para acceder al panel de administración.
-                        </p>
-                        <div className="flex gap-3 justify-center">
-                            <Button variant="outline" onClick={() => navigate('/')}>
-                                Volver al Inicio
-                            </Button>
-                            <Button onClick={() => setIsLoginOpen(true)}>
-                                <LogIn className="h-4 w-4 mr-2" />
-                                Iniciar Sesión
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-                <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
-            </AppShell>
-        );
-    }
-
     // Authenticated but not admin - show access denied
     if (!isAdmin) {
         return (
@@ -175,6 +147,15 @@ export default function AdminPage() {
                             >
                                 <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                                 Actualizar
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => navigate('/')}
+                                className="bg-background border-slate-200"
+                            >
+                                <HomeIcon className="h-4 w-4 mr-2" />
+                                Volver al Inicio
                             </Button>
                             <Button onClick={handleCreate} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20 rounded-xl px-6 h-11 transition-all active:scale-95">
                                 <Plus className="h-5 w-5 mr-2" />

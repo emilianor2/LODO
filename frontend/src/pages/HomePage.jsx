@@ -5,7 +5,6 @@ import Hero from '../components/home/Hero';
 import Features from '../components/home/Features';
 import Stats from '../components/home/Stats';
 import CategoryExplorer from '../components/home/CategoryExplorer';
-import StickyStory from '../components/home/StickyStory';
 import FinalCTA from '../components/home/FinalCTA';
 import Footer from '../components/home/Footer';
 
@@ -34,7 +33,6 @@ const HomePage = () => {
                     <Features />
                     <Stats />
                     <CategoryExplorer />
-                    <StickyStory />
                     <FinalCTA />
                 </div>
             </main>

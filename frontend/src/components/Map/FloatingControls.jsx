@@ -40,6 +40,8 @@ export default function FloatingControls({
                 </Button>
             </div>
 
+            {/* (Agregar Empresa moved to header) */}
+
             {/* Loading Indicator - Absolute to prevent shifting the center pill */}
             <div className="absolute top-[calc(100%+12px)] left-1/2 -translate-x-1/2 pointer-events-none w-max">
                 {loading && (

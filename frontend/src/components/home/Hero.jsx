@@ -6,10 +6,6 @@ import { useNavigate } from 'react-router-dom';
 const Hero = () => {
     const navigate = useNavigate();
 
-    const scrollToFeatures = () => {
-        const element = document.getElementById('how-it-works');
-        element?.scrollIntoView({ behavior: 'smooth' });
-    };
 
     return (
         <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 overflow-hidden pt-20">
@@ -60,7 +56,7 @@ const Hero = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <span className="inline-flex items-center px-4 py-1.5 rounded-full border border-primary/20 bg-primary/10 text-primary text-sm font-medium mb-8 backdrop-blur-sm">
+                    <span className="inline-flex items-center px-4 py-1.5 mt-12 rounded-full border border-primary/20 bg-primary/10 text-primary text-sm font-medium mb-8 backdrop-blur-sm">
                         <span className="w-2 h-2 rounded-full bg-primary animate-pulse mr-2" />
                         El ecosistema AgriFoodTech en un solo lugar
                     </span>
@@ -89,14 +85,7 @@ const Hero = () => {
                             <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                         </motion.button>
 
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={scrollToFeatures}
-                            className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-2xl font-semibold hover:bg-white/10 transition-colors backdrop-blur-md"
-                        >
-                            Cómo funciona
-                        </motion.button>
+                        {/* Removed "Cómo funciona" button per request */}
                     </div>
                 </motion.div>
             </div>
