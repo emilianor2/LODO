@@ -11,12 +11,16 @@ const ADMIN_TOKEN = import.meta.env.VITE_ADMIN_TOKEN;
  */
 async function fetchWithSignal(url, options = {}) {
     const response = await fetch(url, options);
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    if (response.status === 204) return null;
     const contentType = response.headers.get('content-type') || '';
     const text = await response.text();
+    if (!response.ok) {
+        const message = text || `HTTP error! status: ${response.status}`;
+        const error = new Error(message);
+        error.status = response.status;
+        error.body = text;
+        throw error;
+    }
+    if (response.status === 204) return null;
     if (!text) return null;
     if (contentType.includes('application/json')) {
         return JSON.parse(text);

@@ -87,9 +87,9 @@ export default function FiltersPanel({ filters, onFilterChange, aggregates, load
     }
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
             {/* Dynamic Filters */}
-            <Accordion type="multiple" className="w-full space-y-4">
+            <Accordion type="multiple" className="w-full space-y-3">
                 {filterConfigs.map((config) => {
                     const options = getOptionsWithCounts(config.tax, config.agg);
                     const currentValue = filters[config.key] || "all";
@@ -108,14 +108,14 @@ export default function FiltersPanel({ filters, onFilterChange, aggregates, load
                         <AccordionItem
                             key={config.key}
                             value={config.key}
-                            className="border-none bg-muted/30 rounded-[2rem] px-8 transition-all data-[state=open]:bg-muted/50"
+                            className="border-none bg-muted/30 rounded-2xl px-5 transition-all data-[state=open]:bg-muted/50"
                         >
-                            <AccordionTrigger className="hover:no-underline py-6">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/70">
+                            <AccordionTrigger className="hover:no-underline py-4">
+                                <span className="text-[9px] font-black uppercase tracking-[0.18em] text-foreground/70">
                                     {config.label} {filters[config.key] && "●"}
                                 </span>
                             </AccordionTrigger>
-                            <AccordionContent className="pb-8">
+                            <AccordionContent className="pb-5">
                                 <Select
                                     value={currentValue}
                                     onValueChange={(val) => {
@@ -135,28 +135,28 @@ export default function FiltersPanel({ filters, onFilterChange, aggregates, load
                                     }}
                                 >
                                     <SelectTrigger
-                                        className="w-full h-14 bg-background border-none shadow-sm rounded-2xl font-bold text-sm focus:ring-2 focus:ring-primary/20"
+                                        className="w-full h-10 bg-background border border-border/40 shadow-sm rounded-xl font-bold text-[12px] focus:ring-2 focus:ring-primary/20"
                                         onClick={() => console.log('👆 Select Trigger Clicked:', config.key)}
                                     >
                                         <SelectValue placeholder="Seleccionar..." />
                                     </SelectTrigger>
                                     <SelectContent
-                                        className="rounded-2xl border-none shadow-2xl max-h-[300px] z-[9999]"
+                                        className="rounded-xl border-none shadow-2xl max-h-[260px] z-[9999]"
                                         position="popper"
                                         sideOffset={5}
                                         onPointerDownOutside={() => console.log('🚪 Select closed (clicked outside)')}
                                         container={document.body}
                                     >
-                                        <SelectItem value="all" className="font-extrabold text-[10px] uppercase opacity-50">Todos</SelectItem>
+                                        <SelectItem value="all" className="font-extrabold text-[9px] uppercase opacity-50">Todos</SelectItem>
                                         {options.map((opt, idx) => {
                                             if (config.key === 'country' && idx === 0) {
                                                 console.log('🎨 Rendering first country option:', opt);
                                             }
                                             return (
                                                 <SelectItem key={opt.value} value={opt.value}>
-                                                    <div className="flex justify-between items-center w-full gap-8 min-w-[200px]">
-                                                        <span className="font-bold">{opt.label}</span>
-                                                        <span className="text-[10px] bg-primary/10 text-primary px-2.5 py-1 rounded-full font-black tabular-nums">
+                                                    <div className="flex justify-between items-center w-full gap-6 min-w-[180px]">
+                                                        <span className="font-bold text-[12px]">{opt.label}</span>
+                                                        <span className="text-[9px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-black tabular-nums">
                                                             {opt.count}
                                                         </span>
                                                     </div>
