@@ -122,7 +122,7 @@ export default function AdminPage() {
 
     return (
         <AppShell>
-            <div className="flex flex-col h-full bg-slate-50/50">
+            <div className="flex flex-col min-h-full bg-slate-50/50">
                 {/* Admin Header / Toolbar */}
                 <div className="bg-background border-b px-8 py-6 shadow-sm">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -224,7 +224,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Main Table Area */}
-                <div className="flex-1 overflow-auto p-8 pt-6">
+                <div className="flex-1 p-8 pt-6">
                     {loading ? (
                         <div className="space-y-4">
                             <Skeleton className="h-12 w-full rounded-xl" />
