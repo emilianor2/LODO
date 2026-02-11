@@ -1,10 +1,34 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, ZoomControl } from 'react-leaflet';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, ZoomControl, GeoJSON, Pane } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
+
+let countriesGeoJsonCache = null;
+let countriesGeoJsonPromise = null;
+
+function getCountriesGeoJson() {
+    if (countriesGeoJsonCache) {
+        return Promise.resolve(countriesGeoJsonCache);
+    }
+
+    if (!countriesGeoJsonPromise) {
+        countriesGeoJsonPromise = fetch('/countries.geo.json')
+            .then((res) => res.json())
+            .then((data) => {
+                countriesGeoJsonCache = data;
+                return data;
+            })
+            .catch((err) => {
+                countriesGeoJsonPromise = null;
+                throw err;
+            });
+    }
+
+    return countriesGeoJsonPromise;
+}
 
 const getClusterSizeClass = (count) => {
     if (count < 10) return 'small';
@@ -21,7 +45,7 @@ const hexToRgba = (hex, alpha) => {
 };
 
 const getClusterColors = (count) => {
-    const palette = ['#cfffca', '#a5eea0', '#77dd77', '#5dc460', '#42ab49'];
+    const palette = ['#334155', '#1f2937', '#111827', '#0f172a', '#020617'];
     let index = 0;
 
     if (count >= 6 && count <= 10) index = 1;
@@ -33,7 +57,7 @@ const getClusterColors = (count) => {
 
     return {
         fill,
-        halo: hexToRgba(fill, 0.35)
+        halo: hexToRgba(fill, 0.42)
     };
 };
 
@@ -72,6 +96,114 @@ function MapEvents({ onBboxChange }) {
         },
     });
     return null;
+}
+
+function ClusterVisibilityController({ threshold = 5, onChange }) {
+    const map = useMapEvents({
+        zoomend: () => onChange(map.getZoom() >= threshold),
+    });
+
+    useEffect(() => {
+        onChange(map.getZoom() >= threshold);
+    }, [map, threshold, onChange]);
+
+    return null;
+}
+
+const CHOROPLETH_COLORS = ['#8fcc8c', '#64c163', '#3eb246', '#2a9535', '#1c7226'];
+
+const COUNTRY_ALIASES = {
+    'argentina': 'argentina',
+    'bolivia': 'bolivia',
+    'brasil': 'brazil',
+    'brazil': 'brazil',
+    'chile': 'chile',
+    'colombia': 'colombia',
+    'costa rica': 'costa rica',
+    'cuba': 'cuba',
+    'ecuador': 'ecuador',
+    'el salvador': 'el salvador',
+    'espana': 'spain',
+    'españa': 'spain',
+    'guatemala': 'guatemala',
+    'honduras': 'honduras',
+    'mexico': 'mexico',
+    'méxico': 'mexico',
+    'nicaragua': 'nicaragua',
+    'panama': 'panama',
+    'panamá': 'panama',
+    'paraguay': 'paraguay',
+    'peru': 'peru',
+    'perú': 'peru',
+    'puerto rico': 'puerto rico',
+    'republica dominicana': 'dominican republic',
+    'república dominicana': 'dominican republic',
+    'uruguay': 'uruguay',
+    'venezuela': 'venezuela',
+    'estados unidos': 'united states of america',
+    'eeuu': 'united states of america',
+    'ee. uu.': 'united states of america',
+    'usa': 'united states of america',
+    'united states': 'united states of america',
+    'reino unido': 'united kingdom',
+    'inglaterra': 'united kingdom',
+    'alemania': 'germany',
+    'francia': 'france',
+    'italia': 'italy',
+    'paises bajos': 'netherlands',
+    'países bajos': 'netherlands',
+    'holanda': 'netherlands',
+    'suiza': 'switzerland',
+    'austria': 'austria',
+    'portugal': 'portugal',
+    'irlanda': 'ireland',
+    'belgica': 'belgium',
+    'bélgica': 'belgium',
+    'noruega': 'norway',
+    'suecia': 'sweden',
+    'dinamarca': 'denmark',
+    'finlandia': 'finland',
+    'polonia': 'poland',
+    'rumania': 'romania',
+    'rep checa': 'czechia',
+    'rep. checa': 'czechia',
+    'chequia': 'czechia',
+    'grecia': 'greece',
+    'turquia': 'turkey',
+    'turquía': 'turkey',
+    'rusia': 'russia',
+    'ucrania': 'ukraine',
+    'china': 'china',
+    'india': 'india',
+    'japon': 'japan',
+    'japón': 'japan',
+    'corea del sur': 'south korea',
+    'corea del norte': 'north korea',
+    'israel': 'israel',
+    'arabia saudita': 'saudi arabia',
+    'arabia saudí': 'saudi arabia',
+    'emiratos arabes unidos': 'united arab emirates',
+    'emiratos árabes unidos': 'united arab emirates',
+    'sudafrica': 'south africa',
+    'sudáfrica': 'south africa',
+    'nigeria': 'nigeria',
+    'egipto': 'egypt',
+    'marruecos': 'morocco',
+    'kenia': 'kenya',
+    'australia': 'australia',
+    'nueva zelanda': 'new zealand',
+    'canada': 'canada',
+    'canadá': 'canada'
+};
+
+function normalizeCountryName(value) {
+    if (!value) return '';
+    return String(value)
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ');
 }
 
 // Component to fly to coordinates when updated
@@ -121,8 +253,98 @@ function ResizeMap() {
 
 export default function MapView({ organizations, onBboxChange, onMarkerClick, centeredLocation }) {
     // Center of South America approx
-    const defaultPosition = [-20, -10];
+    const defaultPosition = [10, -20];
     const defaultZoom = 3;
+    const [worldGeo, setWorldGeo] = useState(null);
+    const [showClusters, setShowClusters] = useState(defaultZoom >= 5);
+    const [debouncedOrganizations, setDebouncedOrganizations] = useState(organizations);
+    const countsByCountryRef = useRef(new Map());
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedOrganizations(organizations);
+        }, 180);
+
+        return () => clearTimeout(timer);
+    }, [organizations]);
+
+    useEffect(() => {
+        let mounted = true;
+        getCountriesGeoJson()
+            .then((data) => {
+                if (mounted) setWorldGeo(data);
+            })
+            .catch(() => {
+                if (mounted) setWorldGeo(null);
+            });
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
+    const countsByCountry = useMemo(() => {
+        const counts = new Map();
+        for (const org of debouncedOrganizations) {
+            const normalized = normalizeCountryName(org.country);
+            if (!normalized) continue;
+            const canonical = COUNTRY_ALIASES[normalized] || normalized;
+            counts.set(canonical, (counts.get(canonical) || 0) + 1);
+        }
+        return counts;
+    }, [debouncedOrganizations]);
+
+    useEffect(() => {
+        countsByCountryRef.current = countsByCountry;
+    }, [countsByCountry]);
+
+    const maxCountryCount = useMemo(() => {
+        let max = 0;
+        for (const count of countsByCountry.values()) {
+            if (count > max) max = count;
+        }
+        return max;
+    }, [countsByCountry]);
+
+    const getCountryCount = (feature, countsMap = countsByCountry) => {
+        const featureName = feature?.properties?.name;
+        const normalized = normalizeCountryName(featureName);
+        const canonical = COUNTRY_ALIASES[normalized] || normalized;
+        return countsMap.get(canonical) || 0;
+    };
+
+    const getCountryFillColor = (count) => {
+        if (count <= 0 || maxCountryCount <= 0) return '#e5e7eb';
+        if (maxCountryCount === 1) return CHOROPLETH_COLORS[2];
+        const index = Math.round(((count - 1) / (maxCountryCount - 1)) * (CHOROPLETH_COLORS.length - 1));
+        return CHOROPLETH_COLORS[Math.max(0, Math.min(index, CHOROPLETH_COLORS.length - 1))];
+    };
+
+    const countryStyle = (feature) => {
+        const count = getCountryCount(feature);
+        return {
+            color: '#111111',
+            weight: 1.6,
+            opacity: 0.9,
+            fillColor: getCountryFillColor(count),
+            fillOpacity: count > 0 ? 0.62 : 0.12
+        };
+    };
+
+    const onEachCountry = (feature, layer) => {
+        const countryName = feature?.properties?.name || 'Sin nombre';
+        const initialCount = getCountryCount(feature, countsByCountryRef.current);
+        layer.bindTooltip(`<strong>${countryName}</strong><br/>Startups: ${initialCount}`, {
+            sticky: true,
+            direction: 'top',
+            opacity: 1,
+            className: 'country-tooltip',
+            offset: [0, -2]
+        });
+        layer.on('mouseover', () => {
+            const latestCount = getCountryCount(feature, countsByCountryRef.current);
+            layer.setTooltipContent(`<strong>${countryName}</strong><br/>Startups: ${latestCount}`);
+        });
+    };
 
     // Memoize markers to prevent unnecessary re-renders
     const markers = useMemo(() => {
@@ -168,46 +390,65 @@ export default function MapView({ organizations, onBboxChange, onMarkerClick, ce
             <MapContainer
                 center={defaultPosition}
                 zoom={defaultZoom}
-                minZoom={3}
-                maxBounds={[[-85, -180], [85, 180]]}
+                minZoom={2.7}
+                maxBounds={[[-85, -179.9], [85, 179.9]]}
                 maxBoundsViscosity={1.0}
                 worldCopyJump={false}
                 scrollWheelZoom={true}
-                className="w-full h-full z-0 bg-transparent"
+                className="w-full h-full z-0"
                 zoomControl={false}
                 preferCanvas={true} // Improves performance for many markers
             >
                 <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
                     noWrap={true}
-                    bounds={[[-85, -180], [85, 180]]}
+                />
+                <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    url="https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png"
+                    minZoom={6}
+                    noWrap={true}
                 />
 
                 <ZoomControl position="bottomright" />
 
                 <MapEvents onBboxChange={onBboxChange} />
+                <ClusterVisibilityController threshold={5} onChange={setShowClusters} />
                 <ResizeMap />
 
                 {centeredLocation && <FlyToLocation lat={centeredLocation.lat} lng={centeredLocation.lng} />}
 
-                <MarkerClusterGroup
-                    chunkedLoading
-                    maxClusterRadius={40}
-                    spiderfyOnMaxZoom={true}
-                    showCoverageOnHover={false}
-                    singleMarkerMode={true}
-                    iconCreateFunction={createClusterIcon}
-                    polygonOptions={{
-                        fillColor: '#16a34a',
-                        color: '#16a34a',
-                        weight: 2,
-                        opacity: 1,
-                        fillOpacity: 0.12
-                    }}
-                >
-                    {markers}
-                </MarkerClusterGroup>
+                {worldGeo && (
+                    <Pane name="countries" style={{ zIndex: 350 }}>
+                        <GeoJSON
+                            data={worldGeo}
+                            style={countryStyle}
+                            onEachFeature={onEachCountry}
+                            pane="countries"
+                        />
+                    </Pane>
+                )}
+
+                {showClusters && (
+                    <MarkerClusterGroup
+                        chunkedLoading
+                        maxClusterRadius={40}
+                        spiderfyOnMaxZoom={true}
+                        showCoverageOnHover={false}
+                        singleMarkerMode={true}
+                        iconCreateFunction={createClusterIcon}
+                        polygonOptions={{
+                            fillColor: '#111827',
+                            color: '#111827',
+                            weight: 2,
+                            opacity: 0.95,
+                            fillOpacity: 0.14
+                        }}
+                    >
+                        {markers}
+                    </MarkerClusterGroup>
+                )}
             </MapContainer>
         </div>
     );

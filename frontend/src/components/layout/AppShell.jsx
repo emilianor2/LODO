@@ -1,13 +1,12 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Map, Settings, Search, Menu, Home } from 'lucide-react';
+import { Map, Settings, Search, Menu, Home, BarChart3 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 export default function AppShell({ children, onSearchChange, searchValue, resultsCount }) {
     const location = useLocation();
-    const isAdminRoute = location.pathname.startsWith('/admin');
     const { isAdmin, isAuthenticated } = useAuth();
 
     const navigate = useNavigate();
@@ -64,18 +63,19 @@ export default function AppShell({ children, onSearchChange, searchValue, result
 
                     {/* Right section */}
                     <div className="flex items-center gap-3">
-                        {location.pathname.startsWith('/map') ? (
-                            <Link to="/">
-                                <Button variant="ghost" size="sm" className="hidden sm:flex hover:bg-primary/5 hover:text-primary transition-colors">
-                                    <Home className="h-4 w-4 mr-2" />
-                                    Volver al Inicio
-                                </Button>
-                            </Link>
-                        ) : (
+                        {!location.pathname.startsWith('/map') && (
                             <Link to="/map">
                                 <Button variant="ghost" size="sm" className="hidden sm:flex hover:bg-primary/5 hover:text-primary transition-colors">
                                     <Map className="h-4 w-4 mr-2" />
                                     Ver Mapa
+                                </Button>
+                            </Link>
+                        )}
+                        {location.pathname !== '/' && (
+                            <Link to="/">
+                                <Button variant="ghost" size="sm" className="hidden sm:flex hover:bg-primary/5 hover:text-primary transition-colors">
+                                    <Home className="h-4 w-4 mr-2" />
+                                    Volver al Inicio
                                 </Button>
                             </Link>
                         )}
@@ -91,13 +91,29 @@ export default function AppShell({ children, onSearchChange, searchValue, result
                                 Agregar Empresa
                             </Button>
                         )}
-                        {isAdmin && !isAdminRoute && (
-                            <Link to="/admin">
-                                <Button variant="ghost" size="sm" className="hidden sm:flex hover:bg-primary/5 hover:text-primary transition-colors">
-                                    <Settings className="h-4 w-4 mr-2" />
-                                    Admin
-                                </Button>
-                            </Link>
+                        {isAdmin && (
+                            <>
+                                <Link to="/admin/stats">
+                                    <Button
+                                        variant={location.pathname.startsWith('/admin/stats') ? 'secondary' : 'ghost'}
+                                        size="sm"
+                                        className="hidden sm:flex hover:bg-primary/5 hover:text-primary transition-colors"
+                                    >
+                                        <BarChart3 className="h-4 w-4 mr-2" />
+                                        Estadisticas
+                                    </Button>
+                                </Link>
+                                <Link to="/admin">
+                                    <Button
+                                        variant={location.pathname === '/admin' ? 'secondary' : 'ghost'}
+                                        size="sm"
+                                        className="hidden sm:flex hover:bg-primary/5 hover:text-primary transition-colors"
+                                    >
+                                        <Settings className="h-4 w-4 mr-2" />
+                                        Admin
+                                    </Button>
+                                </Link>
+                            </>
                         )}
                         {/* Mobile menu (simulated) */}
                         <Button variant="ghost" size="icon" className="md:hidden">

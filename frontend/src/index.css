@@ -43,6 +43,13 @@
 
 .leaflet-container {
   @apply h-full w-full rounded-lg;
+  background: #bfc7cc;
+}
+
+/* Green farmland map theme */
+.map-green-theme {
+  position: relative;
+  background: #2b5bb3;
 }
 
 /* Map cluster numbers - readable at all zoom levels (zoom in/out) */
@@ -114,6 +121,29 @@
   margin-left: 2px;
   margin-top: 2px;
   font-size: 12px;
+}
+
+/* Country hover tooltip */
+.country-tooltip {
+  background: rgba(17, 24, 39, 0.94) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.35) !important;
+  padding: 8px 10px !important;
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0.01em;
+}
+
+.country-tooltip strong {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.leaflet-tooltip-top.country-tooltip::before {
+  border-top-color: rgba(17, 24, 39, 0.94) !important;
 }
 
 /* Fix Leaflet marker icons */

@@ -9,7 +9,7 @@ import {
     LayoutDashboard, Plus, Search,
     Filter, Database, RefreshCcw,
     AlertCircle, ShieldX, LogIn,
-    Map as MapIcon, Home as HomeIcon
+    Map as MapIcon
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -147,15 +147,6 @@ export default function AdminPage() {
                             >
                                 <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                                 Actualizar
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => navigate('/')}
-                                className="bg-background border-slate-200"
-                            >
-                                <HomeIcon className="h-4 w-4 mr-2" />
-                                Volver al Inicio
                             </Button>
                             <Button onClick={handleCreate} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20 rounded-xl px-6 h-11 transition-all active:scale-95">
                                 <Plus className="h-5 w-5 mr-2" />
